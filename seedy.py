@@ -1,10 +1,15 @@
+
 from models import User, db, Post
+
+from models import User, db 
+
 from app import app 
 
 db.drop_all()
 db.create_all()
 
 User.query.delete()
+
 
 
 sarada = User(first_name='Sarada', last_name ='Uchiha', image_url = "https://media.tenor.com/rL9NmOLAqI8AAAAC/sarada-uchiha.gif " )
@@ -28,3 +33,7 @@ orochimari1= Post(content="I love science", user_id="6")
 
 db.session.add_all([sarada1, sarada2, mashle1, daemon1, tobirama1, itachi1])
 db.session.commit()
+
+
+
+

@@ -1,5 +1,8 @@
 from flask_sqlalchemy import SQLAlchemy
+
 from datetime import datetime
+
+
 
 db = SQLAlchemy()
  
@@ -33,6 +36,7 @@ class User(db.Model):
                            nullable=True)
     image_url = db.Column(db.Text, 
                             nullable=True)
+
 
     def getpost(self): 
         posts= []

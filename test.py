@@ -18,28 +18,23 @@ class UserTestCase(TestCase):
 
     def setUp(self):
         User.query.delete()
-        
-       
+        Post.query.delete()
 
         user = User(first_name='Daemon', last_name ='C')
         db.session.add(user)
         db.session.commit()
-
         self.user_id = user.id
 
-        if self.user_id is not None:
-            post = Post(title="Creampuffs",content="Lets have a creamPuff", user_id="1")
-            db.session.add(post)
-            db.session.commit()
-            self.post_id = post.id
-        else:
-            self.post_id = None
-
+        post = Post(title ='Try It', content ='Touch my sister and ill kill you', user_id = user.id)
+        db.session.add(post)
+        db.session.commit()
+        self.post_id = post.id
 
 
     def tearDown(self):
-
-        db.session.rollback()
+       Post.query.filter_by(user_id=self.user_id).delete()
+       User.query.filter_by(id=self.user_id).delete()
+       db.session.commit()
       
     
     def test_list_user(self):
@@ -59,23 +54,26 @@ class UserTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)
             self.assertIn("\n<h1>Edit user Daemon", html)
 
-            
-    def test_detail_page(self):
+
+
+    def test_post_form(self):
         with app.test_client() as client:
-            resp = client.get(f'/posts/{self.post_id}')
+            resp = client.get(f'/users/{self.post_id}/posts/new')
             html = resp.get_data(as_text = True)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1> Creampuffs </h1>', html)
+            self.assertIn('\n<h1>Add a post for Daemon C</h1>', html)
     
 
-    def test_post_edit_page(self): 
+    def test_post_details(self): 
         with app.test_client() as client: 
-            resp = client.get(f'/users/{self.post_id}/posts/new')
+            resp = client.get(f'/users/{self.post_id}')
             html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
-            self.assertIn("<h1>Add a post for Daemon C</h1>", html)
+            self.assertIn('\n<h1> Daemon\nC </h1>', html)
+            
+
 
 
 
