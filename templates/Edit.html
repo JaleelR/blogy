@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block  h1%}
+<h1>Edit user {{ user.first_name }}  {{ user.last_name }}</h1>
+{% endblock  %}
+
+
+{% block  main %}
+
+<form action="{{ url_for('edit', user_id=user.id) }}" method="post"> <label for="fname">First name</label>
+    <br>
+    <input id="fname" type="text" name="fname" placeholder="Tony">
+
+  <br>
+  <br>
+
+    <label for="lname">Last name</label>
+       <br>
+        <input  id="lname"type="text" name="lname" placeholder="Stark">
+    
+        <br>
+        <br>  
+
+    <label for="img">Profile picture</label>
+       <br>
+       
+       <input id="img" type="text" name="img" placeholder="https://images.squarespace-cdn.com/content/v1/5b9710a2b1059857fa924458/1564623541570-S1AOJ9KLVJY0XT6ZVKZ1/unnamed+%281%29.jpg?format=1500w">
+     
+       <br>
+       <br>
+       <button id="Save">  Save  </button>
+ </form>     
+
+
+<form action="{{ url_for('delete', user_id=user.id) }}" method="post">
+<button id="Delete" type="submit">Delete</button> 
+</form>       
+
+
+{% endblock  %}
+
+
+
+
+

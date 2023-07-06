@@ -1,0 +1,43 @@
+
+<img src="" alt="">
+<h1> {{user.first_name}}
+{{user.last_name}} </h1>
+
+<div>
+<img src={{user.image_url}} alt="">
+
+</div>
+<br>
+<br>
+
+ <form action="/users/{{user.id}}/edit">
+ <button id="edit">
+    edit  
+ </button>
+</form>
+
+
+
+<form action="/users">
+ <button id="Delete">
+Cancel
+ </button>
+</form>
+
+<h1>Posts</h1>
+<ul>
+ 
+{% for post in user.getpost()%} 
+<a id = "post.id" href="/posts/{{ post.id }}"><li>{{ post.title }}</li></a>
+    {% endfor %}
+</ul>
+  
+</ul>
+
+<form action="/users/{{ user.id }}/posts/new">
+ <button id="edit"> Add Post</button>
+</form>
+
+
+
+</div>
