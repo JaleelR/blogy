@@ -75,6 +75,48 @@ class Post(db.Model):
     user = db.relationship("User", backref="posts")
 
   
+class Tag(db.Model):
+    def __repr__(self):
+        t = self
+        return f"Tag.id = {t.id} tag.name = {t.name} "
+        
+    __tablename__= 'tags'
 
+    @classmethod
+    def gettags(cls):
+        tags = []
+        for tag in Tag.query.all():
+            tags.append(tag)
+        return tags
 
+    id = db.Column(db.Integer, 
+                    primary_key=True,
+                    autoincrement=True)
+                
+    name = db.Column(db.String(20), 
+                     nullable=False,
+                     unique=True)
+    post = db.relationship('Post', secondary='posttags', backref='tags')
+
+    
+
+class PostTag(db.Model):
+    def __repr__(self):
+        pt = self
+        return f"post_id = {pt.post_id} tag.name = {pt.tag_id} "
+    __tablename__= 'posttags'
+
+    post_id = db.Column(db.Integer,
+                    db.ForeignKey('posts.id'),
+                    primary_key=True,
+                    nullable = False,
+                    autoincrement=True)
+
+    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id'),
+                     primary_key=True,
+                     nullable = False,
+                     unique=True)
+
+    
+                
 

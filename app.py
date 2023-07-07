@@ -1,7 +1,7 @@
 """Blogly application."""
 
 from flask import Flask, render_template, redirect, request, url_for
-from models import db, connect_db, User, Post
+from models import db, connect_db, User, Post, Tag, PostTag
 from flask_debugtoolbar import DebugToolbarExtension
 
 app = Flask(__name__)
@@ -37,9 +37,19 @@ def home2():
 def home():
     '''Shows homepage with list of users '''  
     users = User.orderby()
-
-
     return render_template("User.html", users = users )
+
+
+@app.route("/tags")
+def tags_list():
+    '''
+    gets list of tags 
+    '''
+    
+    tags = Tag.gettags()
+    return render_template("taglist.html", tags = tags)
+
+
 
 
 
@@ -51,12 +61,11 @@ def add_user():
     - If post request (hits add button), data from input fields will create user 
    
      '''
+  
     if request.method == "POST":
         first_name = request.form["fname"]
         last_name = request.form["lname"]
         img = request.form["img"]
-
-        print(f"Received form data: first_name={first_name}, last_name={last_name}, img={img}")
         new_user = User(first_name = first_name, last_name = last_name, image_url= img)   
         db.session.add(new_user)
         db.session.commit()
@@ -64,24 +73,54 @@ def add_user():
     else:
      return render_template("create.html")      
 
-
 @app.route("/users/<int:user_id>/posts/new", methods=["GET", "POST"])
-def post_form(user_id):
+def add_post(user_id):
     """
     - Show form to add a post from that user
     - If post request (hits add button), data from input fields will create post and redirect to details page
     """
+    tags = Tag.gettags()
     user = User.query.get_or_404(user_id)
     if request.method == "POST":
         title = request.form['title']
         content = request.form['content']
-        added_post = Post(title= title, content = content, user_id = user.id)
+        added_post = Post(title=title, content=content, user_id=user.id)
+
+        # Retrieve the selected tag ID from the form
+        tag_name = request.form['tag']
+        tag = Tag.query.filter_by(name=tag_name).first()
+        added_post.tags = [tag]
+
         db.session.add(added_post)
         db.session.commit()
-        user.posts.append(added_post)
+
         return redirect(f'/users/{user.id}')
     else:
-        return render_template('post.html', user = user)
+        return render_template('post.html', user=user, tags=tags)
+
+
+
+
+@app.route("/tags/new", methods=["GET", "POST"])
+def add_tag():
+    """
+    - Show form to add a tag from that user
+    - If post request (hits add button), data from input fields will create post and redirect to details page
+    """
+    if request.method == "POST":
+        name = request.form['tagname']
+        added_tag = Tag(name = name)
+        db.session.add(added_tag)
+        db.session.commit()
+        return redirect('/tags')
+    else:
+        return render_template('addtag.html')
+
+
+
+
+
+
 
 
 
@@ -101,10 +140,27 @@ def details(user_id):
 def post_details(post_id):
     '''
     - Get current user instance 
-    - Shows details page 
+    - Shows postsdetails page 
     '''
     post = Post.query.get_or_404(post_id)
     return render_template('postdetail.html', post = post)
+
+
+@app.route("/tags/<int:tag_id>")
+def tag_details(tag_id):
+    '''
+    - Get tag info
+    - Shows tag details page 
+    '''
+    
+    
+    tag = Tag.query.get_or_404(tag_id)
+   
+    return render_template('tagdetails.html', tag = tag)
+
+
+
+
 
 
 
@@ -144,18 +200,50 @@ def post_edit(post_id):
     if Post request(pressed add button)
     - Updates the current post with input fields filled
     '''
+    tags = Tag.gettags()
     post = Post.query.get_or_404(post_id)
     if request.method == "POST":
         title = request.form['title']
         content = request.form['content']
-        added_post = Post(title= title, content = content, user_id = post.user_id)
+        added_post = Post(title=title, content=content, user_id=post.user.id)
+
+        # Retrieve the selected tag ID from the form
+        tag_name = request.form['tag']
+        tag = Tag.query.filter_by(name=tag_name).first()
+        added_post.tags = [tag]
+
         db.session.add(added_post)
         db.session.commit()
-
-        post.append(added_post)
         return redirect(f"/posts/{post.id}")
     else:
-        return render_template('postedit.html', post = post)
+        return render_template('postedit.html', post = post, tags =  tags)
+
+
+@app.route("/tags/<int:tag_id>/edit", methods=["GET", "POST"])
+def tag_edit(tag_id):
+    '''
+    - Shows editpost page
+    - Gets current post
+    if Post request(pressed add button)
+    - Updates the current post with input fields filled
+    '''
+    tag = Tag.query.get_or_404(tag_id)
+    if request.method == "POST":
+        name = request.form['tagnme']
+        added_tag = Tag(name = name)
+        db.session.add(tag)
+        db.session.commit()
+
+        tag.append(added_tag)
+        return redirect(f"/tags/{tag.id}")
+    else:
+        return render_template('tagedit.html', tag = tag)
+
+
+
+
+
+
 
 
 
@@ -183,6 +271,19 @@ def delete_post(post_id):
    """
    post = Post.query.get_or_404(post_id)
    db.session.delete(post)
+   db.session.commit()
+   return redirect('/users') 
+
+  
+@app.route("/tags/<int:tag_id>/delete", methods=["POST"])
+def delete_tag(tag_id):
+   """
+   - Gets the current tag
+   - if delete button is pressed on postedit page, the current post instance is deleted
+   - once deleted client is moved to users.html
+   """
+   tag = Tag.query.get_or_404(tag_id)
+   db.session.delete(tag)
    db.session.commit()
    return redirect('/users')   
 

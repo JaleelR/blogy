@@ -1,14 +1,16 @@
+from app import app
+from models import User, db, Tag, Post, PostTag
 
-from models import User, db, Post
 
-from models import User, db 
-
-from app import app 
 
 db.drop_all()
+
 db.create_all()
 
 User.query.delete()
+Post.query.delete()
+Tag.query.delete()
+PostTag.query.delete()
 
 
 
@@ -21,6 +23,8 @@ Orochimaru = User(first_name='Orochimaru', image_url = "https://78.media.tumblr.
 
 db.session.add_all([sarada,  mashle, daemon, tobirama, itachi])
 db.session.commit() 
+
+
 
 sarada1 = Post(title="Love",content="We\re drunk on the fact that we beleive that love and only love can bring us happiness", user_id="1")
 sarada2 = Post(title="Hope",content="I'll be your light boruto", user_id="1")
@@ -37,3 +41,32 @@ db.session.commit()
 
 
 
+breakingcurses = Tag(name="breaking curses")
+new_blood = Tag(name="new generation")
+big_dog = Tag(name="Im the big dog")
+fav_food= Tag(name="creampuffs")
+hater = Tag(name="Uchihas must die")
+goodguy = Tag(name="shadow hokage")
+goodguy2 = Tag(name="chestnotcheckers")
+goodguy3 = Tag(name="genius")
+creep = Tag(name="science")
+
+db.session.add_all([breakingcurses, new_blood, big_dog, fav_food, hater, goodguy, goodguy2, goodguy3, creep])
+db.session.commit()
+
+
+sarpt = PostTag(post_id = 1, tag_id = 1)
+sarpt2 = PostTag(post_id = 1, tag_id = 2)
+
+daept = PostTag(post_id = 4, tag_id = 3)
+maspt = PostTag(post_id = 3, tag_id = 4)
+tobpt = PostTag(post_id = 5, tag_id = 5)
+
+itapt = PostTag(post_id = 6, tag_id = 6)
+itapt2 = PostTag(post_id = 6, tag_id = 7)
+itapt3 = PostTag(post_id = 6, tag_id = 8)
+
+oropt = PostTag(post_id = 6, tag_id = 9)
+
+db.session.add_all([sarpt, sarpt2, daept, maspt, tobpt, itapt, itapt2, itapt3])
+db.session.commit()

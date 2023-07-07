@@ -4,14 +4,20 @@
 <h1>Edit a post  </h1>
 <form action="/users/{{ post.id }}/edit" method="post">
     <label for="title">Title</label>
-    <br>
-    <input id="title" type="text" name="title">
-    <br>
-    <br>
-    <label for="content">content</label>
-    <br>
-    <input id="content" type="text" name="content">
-    <br>
+    <form action="/users/{{ post.id }}/posts/new" method="post">
+        <label for="title">Title</label>
+        <br>
+        <input id="title" type="text" name="title">
+        <br>
+        <br>
+        <label for="content">content</label>
+        <br>
+        <input id="content" type="text" name="content">
+        <br>
+        
+        {% for tag in tags %}
+        <input type="radio" name="tag" value="{{ tag.id }}">{{ tag.name }}
+        {%endfor%}
     <button>Add</button>
     </form>
     

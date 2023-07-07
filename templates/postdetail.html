@@ -6,7 +6,11 @@
 
 {% block  main%}
 <h3>{{post.content}}</h3>
-<h4> by {{post.user.first_name}} {{post.user.last_name}}</h4>
+<h4> by {{post.user.first_name}} {{post.user.last_name}} On: {{ post.created_at}}</h4>
+<h5>Tags:</h5>
+{%for tag in post.tags%}
+<h5> <div>{{ tag.name }}</div></h5>
+{%endfor%}
 <form action="/posts/{{post.id}}/edit" >
 <button>Edit</button>
 </form>

@@ -17,6 +17,10 @@
 <br>
 <input id="content" type="text" name="content">
 <br>
+
+{% for tag in tags %}
+<input type="radio" name="tag" value="{{ tag.id }}">{{ tag.name }}
+{%endfor%}
 <button>Add</button>
 </form>
 
